@@ -1,0 +1,69 @@
+use rand::Rng;
+use std::io;
+use std::io::Write;
+use std::vec::Vec;
+
+fn print_matrix(matrix: &Vec<Vec<i32>>) {
+    for row in matrix {
+        for &elem in row {
+            print!("{:4}", elem);
+        }
+        println!();
+    }
+    println!();
+}
+
+fn main() {
+    println!("Введите четное число N для размера квадратной матрицы: ");
+    io::stdout().flush().unwrap(); // flush stdout to ensure the prompt appears
+
+    let mut input = String::new();
+    io::stdin().read_line(&mut input).unwrap();
+    let N: usize = input.trim().parse().expect("Введено не число");
+
+    if N % 2 != 0 {
+        println!("Число должно быть четным.");
+        return;
+    }
+
+    let mut rng = rand::thread_rng();
+
+    // Создание матрицы N x N
+    let mut matrix: Vec<Vec<i32>> = vec![vec![0; N]; N];
+
+    // Заполнение матрицы случайными числами в диапазоне [10, 30]
+    for i in 0..N {
+        for j in 0..N {
+            matrix[i][j] = rng.gen_range(10..=30);
+        }
+    }
+
+    println!("Исходная матрица:");
+    print_matrix(&matrix);
+
+    // Поменять значения в верхних четвертях местами без использования swap
+    for i in 0..N / 2 {
+        for j in 0..N / 2 {
+            let temp = matrix[i][j];
+            matrix[i][j] = matrix[i][j + N / 2];
+            matrix[i][j + N / 2] = temp;
+        }
+    }
+
+    // Обнуление левой нижней четверти матрицы
+    for i in N / 2..N {
+        for j in 0..N / 2 {
+            matrix[i][j] = 0;
+        }
+    }
+
+    // Заполнение правой нижней четверти матрицы числом 10
+    for i in N / 2..N {
+        for j in N / 2..N {
+            matrix[i][j] = 10;
+        }
+    }
+
+    println!("Модифицированная матрица:");
+    print_matrix(&matrix);
+}
